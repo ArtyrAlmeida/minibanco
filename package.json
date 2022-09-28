@@ -1,0 +1,27 @@
+{
+  "name": "minibanco",
+  "version": "1.0.0",
+  "description": "Projeto construído utilizando express.js e node.js, para a prática das tecnologias e conceitos da programação para a web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtyrAlmeida/minibanco.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArtyrAlmeida/minibanco/issues"
+  },
+  "homepage": "https://github.com/ArtyrAlmeida/minibanco#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
