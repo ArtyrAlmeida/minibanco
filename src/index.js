@@ -1,42 +1,43 @@
-const express = require("express");
-const fs = require("fs");
+import express from "express";
+import fs from "fs";
+import { v4 } from "uuid"
+import { prismaClient } from "./prismaClients.js";
 const app = express();
 
+
 const port = 3000;
-const database = JSON.parse(fs.readFileSync('src/database.json'));
 
 app.use(express.json());
 
-function getNewId() {
-    const accountList = database.accountList;
-    if(accountList.length == 0) return 1;
-
-    const ids = accountList.map(account => account.id);
-
-    return Math.max(ids) + 1;
+const cpfAlreadyExists = (cpf) => {
+    return 
 }
-
 
 app.get("/", (req, res) => {
     res.json({ message: "Executando!" }).send();
 });
 
-app.get("/accountsList", (req, res) => {
-    res.json(database).send();
+app.get("/accountsList", async (req, res) => {
+    try {
+        const data = await prismaClient.user.findMany();
+        return res.status(200).json({ accounts: data });
+    } catch (error) {
+        return res.status(400).json({ data: error, has_error: true });
+    }
 });
 
-app.post("/createAccount", (req, res) => {
-    const { name, cpf } = req.body;
+app.post("/createAccount", async (req, res) => {
+    const body = req.body;
 
-    const newAccount = {
-        name,
-        cpf,
-        id: getNewId(),
-        statement: []
-    };
-
-    database.accountList.push(newAccount);
-    fs.writeFile('src/database.json', JSON.stringify(database, null, 4), err => console.log("Writen in database"));
+    try {
+        const data = await prismaClient.user.create({ 
+            data: {
+                ...body
+            }
+         })
+    } catch (error) {
+        return res.status(400).json({ data: error, has_error: true });
+    }
 
     return res.status(201).send();
 })

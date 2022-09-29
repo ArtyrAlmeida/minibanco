@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Projeto construído utilizando express.js e node.js, para a prática das tecnologias e conceitos da programação para a web",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js"
@@ -19,7 +20,10 @@
   },
   "homepage": "https://github.com/ArtyrAlmeida/minibanco#readme",
   "dependencies": {
-    "express": "^4.18.1"
+    "@prisma/client": "^4.4.0",
+    "express": "^4.18.1",
+    "prisma": "^4.4.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
