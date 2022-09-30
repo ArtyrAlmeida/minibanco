@@ -1,6 +1,4 @@
 import express from "express";
-import fs from "fs";
-import { v4 } from "uuid"
 import { prismaClient } from "./prismaClients.js";
 const app = express();
 
@@ -8,10 +6,6 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-
-const cpfAlreadyExists = (cpf) => {
-    return 
-}
 
 app.get("/", (req, res) => {
     res.json({ message: "Executando!" }).send();
@@ -29,7 +23,7 @@ app.get("/accountsList", async (req, res) => {
 app.post("/createAccount", async (req, res) => {
     const body = req.body;
 
-    try {
+    try {  
         const data = await prismaClient.user.create({ 
             data: {
                 ...body
@@ -40,6 +34,6 @@ app.post("/createAccount", async (req, res) => {
     }
 
     return res.status(201).send();
-})
+});
 
 app.listen(port, () => console.log(`Executando na porta ${port}`))
