@@ -21,11 +21,12 @@
   "homepage": "https://github.com/ArtyrAlmeida/minibanco#readme",
   "dependencies": {
     "@prisma/client": "^4.4.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.1",
-    "prisma": "^4.4.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "prisma": "^4.4.0"
   }
 }
