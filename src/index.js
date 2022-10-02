@@ -1,5 +1,6 @@
 import express from "express";
 import { prismaClient } from "./prismaClients.js";
+import { encryptPassword, decryptPassword } from "./utils/cripto.js";
 const app = express();
 
 const port = 3000;
@@ -50,12 +51,15 @@ app.get("/accountsList", async (req, res) => {
 });
 
 app.post("/createAccount", async (req, res) => {
-    const body = req.body;
+    const { name, cpf, password } = req.body;
+    
 
     try {  
         const data = await prismaClient.user.create({ 
             data: {
-                ...body
+                name,
+                cpf,
+                password: encryptPassword(password)
             }
          })
     } catch (error) {
@@ -81,6 +85,10 @@ app.post("/deposit", userExists, async (req, res) => {
     }
 
     return res.status(201).send();
+});
+
+app.post("/login", (req, res) => {
+    
 });
 
 app.listen(port, () => console.log(`Executando na porta ${port}`));
