@@ -1,6 +1,10 @@
+import { Prisma, PrismaClient } from "@prisma/client";
 import express from "express";
 import { prismaClient } from "./prismaClients.js";
-import { encryptPassword, decryptPassword } from "./utils/cripto.js";
+import { encryptPassword } from "./utils/cripto.js";
+import { login } from "./utils/jwt.js";
+import { match } from "./utils/match.js";
+
 const app = express();
 
 const port = 3000;
@@ -87,8 +91,27 @@ app.post("/deposit", userExists, async (req, res) => {
     return res.status(201).send();
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
+    const { cpf, password } = req.body;
     
+    try {
+        const data = await prismaClient.user.findUnique({
+            where: {
+                cpf
+            }
+        });
+        if (!data) {
+            return res.status(403).json({ error: "User not found" });
+        }
+        else if (match(password, data.password)) {
+            if(data.id != undefined) return res.status(200).json({token: login(data.id)});
+        }
+        else {
+            return res.status(403).json({ error: "Incorrect password" });
+        }
+    } catch (error) {
+        return res.status(400).json({ data: error, has_error: true });
+    }
 });
 
 app.listen(port, () => console.log(`Executando na porta ${port}`));
