@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import express from "express";
 import { prismaClient } from "./prismaClients.js";
 import { encryptPassword } from "./utils/cripto.js";
-import { login } from "./utils/jwt.js";
+import { login, validateJWT } from "./utils/jwt.js";
 import { match } from "./utils/match.js";
 
 const app = express();
@@ -29,6 +29,18 @@ const userExists = async (req, res, next) => {
     } catch {
         return res.status(400).json({ data: error, has_error: true })
     }
+}
+
+const validateUser = (req, res, next) => {
+    const token = req.headers.authentication;
+
+    try {
+        const id = validateJWT(token);
+    } catch (error) {
+        return res.status(401).json({ error: "Unauthenticated" });
+    }
+
+    next();
 }
 
 app.get("/", (req, res) => {
@@ -73,7 +85,7 @@ app.post("/createAccount", async (req, res) => {
     return res.status(201).send();
 });
 
-app.post("/deposit", userExists, async (req, res) => {
+app.post("/deposit", userExists, validateUser,async (req, res) => {
     const body = req.body;
     const userId = req.userId;
 

@@ -1,7 +1,7 @@
 import pkg from 'jsonwebtoken';
 import * as dotenv from "dotenv";
 
-const { sign } = pkg;
+const { sign, verify } = pkg;
 dotenv.config();
 
 const login = (id) => {
@@ -14,7 +14,7 @@ const login = (id) => {
 
 const validateJWT = (token) => {
     try {
-        const { data } = validate(token, process.env.JWT_SECRET);
+        const { data } = verify(token, process.env.JWT_SECRET);
         return data;
     } catch {
         throw new Error;
