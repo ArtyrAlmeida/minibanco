@@ -19,11 +19,13 @@ const userExists = async (req, res, next) => {
                 cpf
             },
             select: {
-                id: true
+                id: true,
+                cpf: true
             }
         })
         if (!data) return res.status(400).json({ error: "User not found" });
         req.userId = data.id;
+        req.userCPF = data.cpf;
     
         next();
     } catch {
@@ -41,6 +43,29 @@ const validateUser = (req, res, next) => {
     }
 
     next();
+}
+
+const getBalance = async (cpf) => {
+    try {
+        const data = await prismaClient.user.findFirst({
+            where: {
+                cpf
+            },
+            select: {
+                statement: true
+            }
+        });
+        return data.statement.reduce((acc, operation) => {
+            if(operation.type === "credit") {
+                return acc + operation.value;
+            }
+            else {
+                return acc - operation.value;
+            }
+        }, 0);
+    } catch (error) {
+        return error;
+    }
 }
 
 app.get("/", (req, res) => {
@@ -89,6 +114,31 @@ app.post("/deposit", userExists, validateUser,async (req, res) => {
     const body = req.body;
     const userId = req.userId;
 
+    try {  
+        const data = await prismaClient.statement.create({ 
+            data: {
+                ...body,
+                userId
+            }
+         })
+    } catch (error) {
+        return res.status(400).json({ data: error, has_error: true });
+    }
+
+    return res.status(201).send();
+});
+
+app.post("/withdraw", userExists, validateUser, async (req, res) => {
+    const body = req.body;
+    const userId = req.userId;
+    const userCPF = req.userCPF;
+    
+    const balance = await getBalance(userCPF);
+
+    if(balance < body.value) {
+        return res.status(400).json({ error: "Insufficient funds" }).send();
+    }
+    
     try {  
         const data = await prismaClient.statement.create({ 
             data: {
