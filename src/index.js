@@ -180,6 +180,21 @@ app.get("/statement", userExists, validateUser, async (req, res) => {
     } catch (error) {
         return res.status(400).json({ data: error, has_error: true });
     }
+});
+
+app.delete("/deleteAccount", userExists, validateUser, async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        const data = await prismaClient.user.delete({
+            where: {
+                id: userId
+            }
+        });
+        return res.status(200).json({ deleted: userId });
+    } catch (error) {
+        return res.status(400).json({ data: error, has_error: true });
+    }
 })
 
 app.post("/login", async (req, res) => {

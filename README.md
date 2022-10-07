@@ -33,6 +33,7 @@ npm run dev
 5. Depósito - É possível depositar um valor na conta
 6. Saque - É possível retirar um valor da conta
 7. Extrato - É possível obter a lista de operações realizadas em dada conta
+8. Deleção - É possível deletar uma conta
 
 ### Tecnologias
 
