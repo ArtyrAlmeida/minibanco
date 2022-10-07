@@ -75,14 +75,9 @@ app.get("/", (req, res) => {
 app.get("/accountsList", async (req, res) => {
     try {
         const data = await prismaClient.user.findMany({
-            include: {
-                statement: {
-                    select: {
-                        id: true,
-                        type: true,
-                        value: true
-                    }
-                }
+            select: {
+                name: true,
+                id: true
             }
         });
         return res.status(200).json({ accounts: data });
@@ -152,6 +147,40 @@ app.post("/withdraw", userExists, validateUser, async (req, res) => {
 
     return res.status(201).send();
 });
+
+app.put("/editAccount", userExists, validateUser, async (req, res) => {
+    const { name } = req.body;
+    const userId = req.userId;
+
+    try {
+        const data = await prismaClient.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                name: name
+            }
+        });
+        return res.status(204).json({ updated: name });
+    } catch (error) {
+        return res.status(400).json({ error: error });
+    }
+});
+
+app.get("/statement", userExists, validateUser, async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        const data = await prismaClient.statement.findMany({
+            where: {
+                userId: userId
+            }
+        });
+        return res.status(200).json({ userStatement: data });
+    } catch (error) {
+        return res.status(400).json({ data: error, has_error: true });
+    }
+})
 
 app.post("/login", async (req, res) => {
     const { cpf, password } = req.body;
